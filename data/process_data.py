@@ -1,5 +1,4 @@
 import sys
-#import sqlalchemy as sqal
 from sqlalchemy import create_engine
 import pandas as pd
 
@@ -49,7 +48,9 @@ def clean_data(df):
     print(df.head())
     #
     # remove duplicates.
+    # Use the "original" column to check for duplicates
     # check the number of duplicates
+    #
     df.duplicated(subset='original', keep='first').value_counts()
     # drop duplicates
     df = df.drop_duplicates(subset='original', keep='first')
@@ -60,10 +61,8 @@ def clean_data(df):
 def save_data(df, database_filename):
     
     # Save the cleaned data base to an sqlite database
-    #engine = create_engine('sqlite:///database_filename')
     engine = create_engine('sqlite:///{}'.format(database_filename))
     df.to_sql(database_filename, engine, index=False, if_exists='replace')
-    #df.to_csv(database_filename)
     
 def main():
     
