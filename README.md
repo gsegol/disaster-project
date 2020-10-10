@@ -10,7 +10,8 @@
 ## Installation <a name="installation"></a>
 
 There should be no necessary libraries to run the code here beyond the Anaconda distribution of Python.  The code should run with no issues using Python versions 3.*.
-The project uses two *.csv files included in this repository
+The project uses two *.csv files included in this repository.  
+The project creates a *.db file to store the cleaned data, and a *.pkl file to store the trained model
 
 ## Project Motivation<a name="motivation"></a>
 
@@ -20,13 +21,13 @@ The purpose of this project is to apply machine-learning techniques to the class
 
 The project is run in three steps:  
 1. Data preparation
-Run: 'python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/disasterdb.db` 
+Run: 'python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/database_filename.db` 
 disasterdb.db is the output file storing the cleaned data; the name is specified in the command line.
 2. Data classification
-Run: `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
+Run: `python train_classifier.py ../data/database_filename.db ../models/model_filename.pkl`
 classifier.pkl is the pickle file storing the trained model; the name is specified in the command line.
 3. Results 
-Run: 'python run.py' to display the web app.
+Run: 'python run.py database_filename.db model_filename.pkl' to create the web app.
 
 ## Results<a name="results"></a>
 
