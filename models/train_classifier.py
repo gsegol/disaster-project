@@ -19,39 +19,47 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.multioutput import MultiOutputClassifier
 
-
-
 def load_data(database_filepath):
     
-    # use sql
-    #engine = create_engine('sqlite:///disasterdb.db')
-    #engine = create_engine(database_filepath)
+    '''
+    #This function reads the clean data and creates X, y variables for the model.
+    INPUT
+        the sql file of clean data
+    
+    OUTPUT:
+        X: independent variable
+        y: dependent variable
+        ylabels: column names
+    '''
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     tablenames = engine.table_names()
     print(tablenames)
     df = pd.read_sql_table(tablenames[0], engine)
     
-    tablenames = engine.table_names()
-    #print(tablenames)
-    # use csv
-    #df = pd.read_csv(database_filepath)
     #check sample
     print(df.loc[0:10, 'message'])
  
     X = df['message']
     y = df[df.columns[4:]]
-    #y = df[df.columns[5:]]
     #
     print("X and y dimensions: ", X.shape, " ", y.shape)
 
     df.head()
     ylabels = df.columns[4:]
-    #ylabels = df.columns[5:]
+ 
     print("Columns headers for y:\n", ylabels)
     return X, y, ylabels
 
 
 def tokenize(text):
+    
+    '''
+    #This function parses a message, removes stopwords and punctuation
+    INPUT:
+        a text message
+    OUTPUT:
+        clean tokens
+    '''
     stop_words = stopwords.words("english")
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     txt = word_tokenize(text)
@@ -62,6 +70,9 @@ def tokenize(text):
 
 
 def build_model(classifier):
+    
+    #This function builds a pipeline and optimizes parameter selection
+    
     parameters = {
         'tfidf__use_idf': (True, False),
         'vect__max_features': (None, 5000), 
@@ -78,6 +89,9 @@ def build_model(classifier):
     return cv
 
 def display_results(Y_pred, Y_true, labels):
+    
+    #This function tabulates performance metrics
+    
     Y_pred_ = pd.DataFrame(Y_pred, columns=labels)
     report = {}
     for i, var in enumerate(labels): 
@@ -93,7 +107,12 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
-    
+    '''
+    #This function saves the trained model as a pickle file
+    INPUT
+        model: trained model
+        model_filepath: chosen path/filename
+    '''        
     pkl_filename = model_filepath
     with open(pkl_filename, 'wb') as file:
         pickle.dump(model, file)
@@ -126,7 +145,7 @@ def main():
         print('Please provide the filepath of the disaster messages database '\
               'as the first argument and the filepath of the pickle file to '\
               'save the model to as the second argument. \n\nExample: python '\
-              'train_classifier.py ../data/DisasterResponse.db classifier.pkl')
+              'train_classifier.py ../data/disaster.db classifier.pkl')
 
 
 if __name__ == '__main__':
