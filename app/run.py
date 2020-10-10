@@ -7,11 +7,9 @@ from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-#import plotly.graph_objs as go
 
 from plotly.graph_objs import Bar
 from plotly.graph_objs import Pie
-#import plotly.express as px
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
@@ -30,10 +28,8 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-#engine = create_engine('sqlite:///../data/YourDatabaseName.db')
 database_filepath = 'disasterdb.db'
 engine = create_engine('sqlite:///../data/{}'.format(database_filepath))
-#df = pd.read_sql_table('YourTableName', engine)
 tablenames = engine.table_names()
 df = pd.read_sql_table(tablenames[0], engine)
 print("Reading data base. . .")
@@ -41,30 +37,34 @@ print("dimensions:", df.shape)
 print(df.head(5))
 
 def group_msg_types(df):
+    
+    #This function groups the messages into six categories of need
+    '''
+    INPUT:
+        the dataframe of cleaned data
+    OUTPUT:
+        df_group: the dataframe with columns arranged according to the subgroups
+        df_group_total: a new dataframe containing the sum of messages in each subgrop
+        group_size: number of variables in each group 
+    '''
     group_size = []
     
     df_basic = df[['food', 'water', 'shelter', 'clothing', 'cold', 'money']]
-    #df_basic_total = df_basic.sum()
     group_size.append(df_basic.shape[1])
                       
     df_medical = df[['medical_help', 'medical_products', 'hospitals', 'death']]
-    #df_medical_total = df_medical.sum()
     group_size.append(df_medical.shape[1])
                       
     df_weather = df[['storm', 'fire', 'earthquake', 'floods', 'weather_related', 'other_weather']]
-    #df_weather_total = df_weather.sum()
     group_size.append(df_weather.shape[1])
                       
     df_utilities = df[['infrastructure_related', 'buildings', 'electricity', 'tools', 'transport', 'shops','other_infrastructure']]
-    #df_utilities_total = df_utilities.sum()
     group_size.append(df_utilities.shape[1])
         
     df_people = df[['missing_people', 'child_alone', 'refugees', 'search_and_rescue', 'security', 'military']]
-    #df_people_total = df_people.sum()
     group_size.append(df_people.shape[1])
         
     df_other = df[['aid_related', 'other_aid', 'aid_centers', 'request', 'offer', 'direct_report']]
-    #df_other_total = df_other.sum()
     group_size.append(df_other.shape[1])
         
     df_group = pd.concat([df_basic, df_medical, df_weather, df_utilities, df_people, df_other], axis=1)
@@ -89,7 +89,6 @@ total_requests = df_group_total.sum().sum(axis=0)
 
 # load model
 print("Loading pkl file")
-#model = joblib.load("../models/your_model_name.pkl")
 model = joblib.load("../models/tuned_model.pkl")
 print("done")
 
@@ -99,47 +98,27 @@ print("done")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
     msg_types_count = df.iloc[:,5:].sum().sort_values(ascending=False)
     msg_types = msg_types_count.index
     msg_group_count = df_group.sum()
     msg_group = msg_group_count.index
     msg_group_total_count = df_group_total.sum()
     msg_group_total = msg_group_total_count.index
-
-    
     
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
-    color_sequence = ["red", "green", "blue", "goldenrod", "magenta", "lightslategrey", "orange"]
+
     color_sequence =['rgb(31, 119, 180)', 'rgb(255, 127, 14)',
                        'rgb(44, 160, 44)', 'rgb(214, 39, 40)',
                        'rgb(148, 103, 189)', 'rgb(140, 86, 75)',
                        'rgb(227, 119, 194)', 'rgb(127, 127, 127)',
                        'rgb(188, 189, 34)', 'rgb(23, 190, 207)']
     ncat = len(group_size)
-    #colors = ['orange',] * ncat
     colors=[]
     group_colors = []
-    '''
-    i = 0
-    #colors[i:group_size[i]] = [color_sequence[i],]*group_size[i]
-    colors[i:group_size[i]] = color_sequence[i]
-    for j in range (0, group_size[i]):
-        #colors[i:j] = color_sequence[i]
-        colors.append(color_sequence[i])
-    '''
-
-    #colors[0:group_size[0]] = [color_sequence[0]]*group_size[0]
+    #assign group colors
     for i in range (0, ncat):
-   
-        #colors[group_size[i-1]-1:group_size[i-1]+group_size[i]] = [color_sequence[i],]*group_size[i]
         for j in range (0, group_size[i]):
-            #colors[group_size[i] + j] = color_sequence[i]
             colors.append(color_sequence[i])          
-        #colors[group_size[i-1]-1:group_size[i-1]+group_size[i]]  = color_sequence[i]
         group_colors.append(color_sequence[i])
     print(group_colors)
   
@@ -170,7 +149,6 @@ def index():
                 Bar(
                     x=msg_group,
                     y=msg_group_count,
-                    #marker=dict(color=[['green']*5, 'blue', 'blue', colors[1], ('blue')]),
                     marker=dict(color=colors)
                 )
             ],
@@ -188,13 +166,9 @@ def index():
          {
             'data': [ #third graph
                 Bar(
-                    #labels=df_group_total.columns,
-                    #values=df_group_total.values,
                     x=msg_group_total,
                     y=msg_group_total_count,
-                    #marker=dict(color=[['green']*5, 'blue', 'blue', colors[1], ('blue')]),
                     marker=dict(color=group_colors)
-                   
                 )
             ],
             'layout': {
@@ -204,8 +178,7 @@ def index():
                 },
                 'xaxis': {
                     'title': " ",'tickangle': 0
-                }
-                
+                } 
                
             }             
             
@@ -213,24 +186,13 @@ def index():
         {
             'data': [ #fourth graph
                 Pie(
-
                     labels=msg_group_total,
                     values=msg_group_total_count,
-                    #marker=dict(color=[['green']*5, 'blue', 'blue', colors[1], ('blue')]),
                     marker=dict(colors=group_colors)
-                   
                 )
             ],
             'layout': {
-                'title': 'Aid Priorities, as measured by % messages received ',
-               # 'yaxis': {
-                    #'title': "Count"
-                #},
-                #'xaxis': {
-                   # 'title': " ",'tickangle': -45
-                #}
-                
-               
+                'title': 'Aid Priorities, as measured by % messages received ',  
             }             
             
         },
