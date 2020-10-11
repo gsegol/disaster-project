@@ -26,12 +26,14 @@ The project is run in three steps:
 
  
 database_filename.db is the output file storing the cleaned data; the name is specified in the command line.
+
 2. Data classification
   * cd to the models folder
   * Run: `python train_classifier.py ../data/database_filename.db ../models/model_filename.pkl`
 
 
 model_filename.pkl is the pickle file storing the trained model; the name is specified in the command line.
+
 3. Results
   * cd to the app folder 
   * Run: `python run.py database_filename.db model_filename.pkl` to create the web app.  The terminal will wait . ..
