@@ -22,15 +22,21 @@ The purpose of this project is to apply machine-learning techniques to the class
 The project is run in three steps:  
 1. Data preparation
   * cd to the data folder
-  * Run: python process_data.py disaster_messages.csv disaster_categories.csv data/database_filename.db 
+  * Run: `python process_data.py disaster_messages.csv disaster_categories.csv data/database_filename.db`
+
+ 
 database_filename.db is the output file storing the cleaned data; the name is specified in the command line.
 2. Data classification
   * cd to the models folder
-  * Run: python train_classifier.py ../data/database_filename.db ../models/model_filename.pkl
+  * Run: `python train_classifier.py ../data/database_filename.db ../models/model_filename.pkl`
+
+
 model_filename.pkl is the pickle file storing the trained model; the name is specified in the command line.
 3. Results
   * cd to the app folder 
-  * Run: 'python run.py database_filename.db model_filename.pkl' to create the web app.
+  * Run: `python run.py database_filename.db model_filename.pkl` to create the web app.  The terminal will wait . ..
+
+Open the browser with the URL determined by your deployment method.  It could be a local server or a public service such as Heroku, IBM Cloud, etc.  For reference, the image below is a screenshot of what the first page of the web app.
 
 ## Results<a name="results"></a>
 
