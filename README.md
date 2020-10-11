@@ -42,8 +42,7 @@ Based on the text analysis, the messages can be separated into 36 categories cor
 
 Interestingly, more than half of the messages are in the Other/unspecified category, which shows where more work is needed.  The original messages where in French or local dialect, which introduced another element of uncertainty.
 
-![alt text][logo]
-[logo]: https://github.com/gsegol/disaster-project/img/disaster_results_sm.png "pg.1 screenshot"
+![](../img/disaster_results_sm.png "pg.1 screenshot")
 
 ## Licensing, Authors, Acknowledgements<a name="licensing"></a>
 The initial data were provided by Figure Eight (now Appen https://appen.com/).  Otherwise, the code is free to use.
